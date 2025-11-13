@@ -4,7 +4,7 @@ import numpy as np
 from extraction import load_instance
 
 
-def LP_multi(nom_instance, Dmax, Pmax, Rmax):
+def LP_multi(nom_instance, Dmax, Nmax, Rmax):
 
     Hmax, Smax, Pmax,Qmax,n_values,v_values,g_values,c_values,d_values,r_values, staff_names, job_names, qual_names = load_instance(nom_instance)
     # Creation of a Concrete Model
@@ -96,13 +96,13 @@ def LP_multi(nom_instance, Dmax, Pmax, Rmax):
         return sum(model.fin[p] - model.debut[p] for p in model.P) <= Dmax
     model.duree=Constraint(rule=dureeMax_rule, doc="duree de projet max")
 
-    def Nb_projet_rule(model):
-        return sum(model.k[s,p] for s in model.S for p in model.P)/Smax<= Pmax
-    model.Nb_projet=Constraint(rule=Nb_projet_rule, doc="nombre de projets max")
+    def Nb_projet_rule(model,s):
+        return sum(model.k[s,p] for p in model.P)<= Nmax
+    model.Nb_projet=Constraint(model.S, rule=Nb_projet_rule, doc="nombre de projets max")
     
     def retardMax_rule(model):
         return sum(model.p_retard[p] for p in model.P)<= Rmax
-    model.Nb_projet=Constraint(rule=retardMax_rule, doc="retard max")
+    model.reatrdMax=Constraint(rule=retardMax_rule, doc="retard max")
 
     #Objective
     model.obj=Objective(expr=sum(model.f[p]*model.g[p] - model.R[p]*model.r[p] for p in model.P), sense=maximize)
