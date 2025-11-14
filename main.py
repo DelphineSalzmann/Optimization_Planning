@@ -13,14 +13,14 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 if __name__ == "__main__":
 
     # Choix instance 
-    NOM_INSTANCE = "medium" # "toy", "medium", "large"
+    NOM_INSTANCE = "toy" # "toy", "medium", "large"
 
     # Choix problème multiobjectif
     PRIMAIRE= 'profit'                     # Fonction objectif: 'nb_projets_max', 'retard', 'duree', 'profit'
 
     #SECONDAIRES = []                     # Cas 1: seul l'objectif primaire est pris en compte
-    #SECONDAIRES = ['nb_projets_max']              # Cas 2: 2 objectifs (Pareto 2D) 'nb_projets_max', 'retard', 'duree', 'profit'
-    SECONDAIRES = ['nb_projets_max','retard']    # Cas 3: 3 objectifs (Pareto 3D)
+    SECONDAIRES = ['nb_projets_max']              # Cas 2: 2 objectifs (Pareto 2D) 'nb_projets_max', 'retard', 'duree', 'profit'
+    #SECONDAIRES = ['nb_projets_max','retard']    # Cas 3: 3 objectifs (Pareto 3D)
     #SECONDAIRES = ['nb_projets_max', 'duree', 'retard'] # Cas 4: 4 obkectifs (Pareto 4D)
 
     # Pour visualiser le résultat avec la valeur d'epsilon spécifiée
