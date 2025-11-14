@@ -1,10 +1,4 @@
 from pyomo.environ import *
-from LP_profit import LP_gain
-from LP_Min_duree import LP_durée
-from LP_min_projet import LP_nb_projet
-from LP_retard import LP_retard
-from LP_multi import LP_multi
-from extraction import load_instance
 from check import check_solution
 import matplotlib.pyplot as plt
 from pyomo.environ import value
@@ -96,9 +90,8 @@ def afficher_solution(model, result, seuil_affichage=0.5):
         penalty_rate = value(model.r[p]) if hasattr(model, 'r') and p in model.r else 0
         
         # 5. Jour de complétion (MODIFIÉ V3)
-        completion_day = value(model.fin[p]) if hasattr(model, 'fin') and p in model.fin else None
+        completion_day = value(model.fin[p])
         completion_day_str = f"{completion_day:.0f}" if completion_day is not None else "N/A"
-        
 
         # --- Logique pour Statut, Couleur, Hauteur de Barre, et Survol ---
         bar_height = actual_work_days # Par défaut
@@ -107,10 +100,7 @@ def afficher_solution(model, result, seuil_affichage=0.5):
         hover_details = ''
         
         if is_finished:
-            # MODIFIÉ V3: Calcul du retard basé sur completion_day
             jours_de_retard = value(model.R[p])
-            
-            # MODIFIÉ V3: Hauteur de barre = jour de complétion
             bar_height = completion_day if completion_day is not None else actual_work_days
             
             if jours_de_retard > 0:
@@ -223,7 +213,7 @@ def afficher_solution(model, result, seuil_affichage=0.5):
                         y0=y0, y1=y1,
                         xref="x1", yref="y1",
                         # MODIFIÉ V3: Couleur de la deadline
-                        line=dict(color="black", width=2),
+                        line=dict(color="red", width=2),
                         layer="above"
                     )
             except Exception:
@@ -353,7 +343,7 @@ def afficher_solution(model, result, seuil_affichage=0.5):
     fig.add_trace(
         go.Bar(
             x=df_projects['Projet'],
-            y=df_projects['Bar_Height'], # Hauteur dynamique (fin si fini, N si non fini)
+            y=df_projects['Bar_Height'], # Hauteur dynamique (delta si fini, N si non fini)
             marker_color=df_projects['Color'], 
             text=[f"{j}j<br>{g:,.0f}€" for j, g in zip(df_projects['Jours_travailles'], df_projects['Gain'])],
             textposition='auto',
@@ -414,12 +404,5 @@ def afficher_solution(model, result, seuil_affichage=0.5):
         barmode='overlay' 
     )
 
-    print("✅ Affichage du dashboard...")
+    print("Affichage du dashboard...")
     fig.show()
-
-# Utilisation
-Hmax, Smax, Pmax,Qmax,n_values,v_values,g_values,c_values,d_values,r_values, staff_names, job_names, qual_names = load_instance('medium')
-
-model, result = LP_multi('medium', Hmax, 3, sum(r_values)*Hmax)
-afficher_solution(model, result)
-check_solution(model)

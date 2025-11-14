@@ -8,7 +8,7 @@ def check_solution(model, tolerance=1e-6):
     Prend en entrée le modèle Pyomo *résolu*.
     Retourne True si tout est valide, False sinon.
     """
-    print("---  DÉBUT DE LA VÉRIFICATION DE LA SOLUTION ---")
+    print("--- 🚀 DÉBUT DE LA VÉRIFICATION DE LA SOLUTION ---")
     all_ok = True
 
     # Accès aux ensembles pour itérer

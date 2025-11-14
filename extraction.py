@@ -1,5 +1,5 @@
 import json
-import numpy as np
+import os
 from pyomo.environ import *
 
 def load_instance(instance_name):
@@ -14,7 +14,9 @@ def load_instance(instance_name):
     """
     
     # Load the JSON data
-    with open(f'{instance_name}_instance.json', 'r') as f:
+    base_path = os.path.dirname(__file__)
+    filepath = os.path.join(base_path, f"{instance_name}_instance.json")
+    with open(filepath, "r") as f:
         data = json.load(f)
     
     # Extract data from JSON
@@ -75,7 +77,3 @@ def load_instance(instance_name):
                 v_values[s, h] = 0
 
     return Hmax, Smax, Pmax,Qmax,n_values,v_values,g_values,c_values,d_values,dp_values, staff_names, job_names, qual_names
-
-
-print(load_instance("toy"))
-
