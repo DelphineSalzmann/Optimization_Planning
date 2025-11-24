@@ -57,7 +57,7 @@ def afficher_solution(model, result, seuil_affichage=0.5):
                     })
     df_vacations = pd.DataFrame(vacations_data)
 
-    # --- Résumé projets (MODIFIÉ V3) ---
+    # --- Résumé projets ---
     
     # 1. Durées théoriques
     theoretical_durations = {}
@@ -89,7 +89,7 @@ def afficher_solution(model, result, seuil_affichage=0.5):
         deadline_str = f"{deadline:.0f}" if deadline is not None and deadline != float('inf') else "N/A"
         penalty_rate = value(model.r[p]) if hasattr(model, 'r') and p in model.r else 0
         
-        # 5. Jour de complétion (MODIFIÉ V3)
+        # 5. Jour de complétion
         completion_day = value(model.fin[p])
         completion_day_str = f"{completion_day:.0f}" if completion_day is not None else "N/A"
 
@@ -119,7 +119,7 @@ def afficher_solution(model, result, seuil_affichage=0.5):
                 hover_details = "Projet terminé à temps."
         
         else:
-            # CAS 1: Non fini (inchangé)
+            # CAS 1: Non fini
             color = '#d62728' # Rouge
             bar_height = duree_theorique # Hauteur = objectif théorique
             
@@ -150,7 +150,7 @@ def afficher_solution(model, result, seuil_affichage=0.5):
         
     df_projects = pd.DataFrame(project_summary_data)
 
-    # --- Demande qualifications (inchangé) ---
+    # --- Demande qualifications ---
     qual_demand_data = []
     if hasattr(model, 'jobs_data'):
         for job in model.jobs_data:
@@ -187,7 +187,6 @@ def afficher_solution(model, result, seuil_affichage=0.5):
         vertical_spacing=0.15,
         horizontal_spacing=0.1
     )
-    # Axes: (1,1) -> x1, y1 | (2,1) -> x2, y2 | (2,2) -> x3, y3
 
     # Couleurs cohérentes par projet
     projects = project_names
@@ -257,7 +256,7 @@ def afficher_solution(model, result, seuil_affichage=0.5):
     fig.update_xaxes(title_text="Périodes", row=1, col=1)
     fig.update_yaxes(title_text="Projets", row=1, col=1)
 
-    # --- 2. TIMELINE DES STAFFEURS (inchangé) ---
+    # --- 2. TIMELINE DES STAFFEURS ---
     if not df_assignments.empty:
         for staff in staff_names:
             staff_assignments = df_assignments[df_assignments['Staffeur'] == staff]
@@ -324,15 +323,15 @@ def afficher_solution(model, result, seuil_affichage=0.5):
     fig.update_xaxes(title_text="Périodes", row=2, col=1)
     fig.update_yaxes(title_text="Staffeurs", row=2, col=1)
 
-    # --- 3. RÉSUMÉ DES PROJETS (MODIFIÉ V3) ---
+    # --- 3. RÉSUMÉ DES PROJETS ---
     
-    # MODIFIÉ V3: Template de survol mis à jour
+    # Template de survol mis à jour
     hovertemplate_str = (
         '<b>%{x}</b><br>' +
         'Statut: <b>%{customdata[0]}</b><br>' +
         '--------------------<br>' +
         'Deadline: Jour %{customdata[4]}<br>' +
-        '<b>Rendu du projet: Jour %{customdata[5]}</b><br>' + # <-- Ligne ajoutée
+        '<b>Rendu du projet: Jour %{customdata[5]}</b><br>' + 
         'Nombre de jours/hommes nécessaires: %{customdata[2]}<br>' +
         'Gain: %{customdata[3]:,.0f}€<br>' +
 
@@ -348,14 +347,14 @@ def afficher_solution(model, result, seuil_affichage=0.5):
             text=[f"{j}j<br>{g:,.0f}€" for j, g in zip(df_projects['Jours_travailles'], df_projects['Gain'])],
             textposition='auto',
             hovertemplate=hovertemplate_str,
-            # MODIFIÉ V3: customdata mis à jour
+            # customdata mis à jour
             customdata=df_projects[[
                 'Statut', 
                 'Jours_travailles',
                 'Duree_Theorique',
                 'Gain', 
                 'Deadline_Str',
-                'Completion_Day_Str', # <-- Ligne ajoutée
+                'Completion_Day_Str', 
                 'Hover_Details'
             ]],
             name="Projets",
@@ -364,7 +363,7 @@ def afficher_solution(model, result, seuil_affichage=0.5):
         row=2, col=2
     )
 
-    # Ajout des lignes de Deadline (inchangé, utilise x3/y3)
+    # Ajout des lignes de Deadline 
     for i, row in df_projects.iterrows():
         deadline_val = row['Deadline_Raw'] # Utilise la valeur numérique
         if deadline_val is not None and deadline_val != float('inf'):
@@ -384,7 +383,7 @@ def afficher_solution(model, result, seuil_affichage=0.5):
     fig.update_yaxes(title_text="Jours", row=2, col=2)
 
 
-    # --- Nettoyage des légendes parasites (inchangé) ---
+    # --- Nettoyage des légendes parasites ---
     for trace in fig.data:
         name = getattr(trace, "name", None)
         if name is None or str(name).strip() == "":
